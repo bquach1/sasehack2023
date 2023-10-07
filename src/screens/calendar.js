@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Calendar, Modal } from "antd";
 import styled from "styled-components";
-import AddIcon from '@mui/icons-material/AddCircle';
+import AddIcon from "@mui/icons-material/AddCircle";
 
 const CalendarWrapper = styled.div`
   background-color: #daf0f7;
   padding: 20px;
 
   .selected-date {
-    display: flex;  
+    display: flex;
     justify-content: center;
   }
 
@@ -35,12 +35,16 @@ const CalendarPage = () => {
   const renderCell = (value) => {
     if (value.$d.toLocaleDateString() === date.toLocaleDateString()) {
       return (
-      <div className="selected-date">
-        <AddIcon className="add-icon" onClick={() => setOpenModal(true)}/>
-      </div>
+        <div className="selected-date">
+          <AddIcon className="add-icon" onClick={() => setOpenModal(true)} />
+        </div>
       );
     }
   };
+
+  const handleModalConfirm = () => {
+    setOpenModal(false);
+  }
 
   return (
     <CalendarWrapper>
@@ -55,7 +59,7 @@ const CalendarPage = () => {
         onSelect={(e) => console.log(e)}
         cellRender={renderCell}
       />
-      <Modal open={openModal}/>
+      <Modal open={openModal} onCancel={() => setOpenModal(false)} onOk={handleModalConfirm}/>
     </CalendarWrapper>
   );
 };
