@@ -1,0 +1,42 @@
+/* NavBar.css */
+
+.nav {
+    background-color: #fff; /* Background color for the navbar */
+    color: #333; /* Text color for the navbar items */
+    padding: 10px 20px; /* Padding around the navbar */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar_title {
+    font-size: 24px; /* Font size for the title */
+    margin: 0;
+  }
+  
+  ul {
+    list-style-type: none; /* Remove default list styling */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px; /* Spacing between navbar items */
+  }
+  
+  .navbar_calendar,
+  .navbar_bot {
+    text-decoration: none;
+    color: #333; /* Text color for navbar items */
+    font-size: 18px; /* Font size for navbar items */
+    transition: color 0.3s; /* Smooth color transition on hover */
+  }
+  
+  .navbar_calendar:hover,
+  .navbar_bot:hover {
+    color: #ff5733; /* Change text color on hover */
+  }
+  
+  /* Style for the active link */
+  .active {
+    font-weight: bold; /* Make the active link text bold */
+  }
+  

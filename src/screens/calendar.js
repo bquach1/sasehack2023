@@ -3,6 +3,7 @@ import { Calendar, Modal, Rate } from "antd";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/AddCircle";
 import CircleIcon from "@mui/icons-material/Circle";
+import NavBar from "../Navbar";
 
 const CalendarWrapper = styled.div`
   background-color: #daf0f7;
@@ -73,6 +74,7 @@ const CalendarPage = () => {
   return (
     <CalendarWrapper>
       <div style={{ display: "flex", flexDirection: "column" }}>
+        <NavBar/>
         <span>Mental Health App</span>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}
