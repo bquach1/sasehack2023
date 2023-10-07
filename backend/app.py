@@ -8,7 +8,7 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 
 app = Flask(__name__)
 
-@app.route("/test")
+@app.route("/test", methods=["GET", "POST"])
 def test():
     try:
         client.admin.command('ping')
