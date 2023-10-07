@@ -30,9 +30,7 @@ const TrackingCalendar = styled(Calendar)`
   border-radius: 10px;
 
   td {
-    background-color: ${(props) =>
-      console.log(props)
-    }
+    background-color: ${(props) => console.log(props)};
   }
 `;
 
@@ -47,24 +45,41 @@ const customIcons = {
 const CalendarPage = () => {
   const [date, setDate] = useState(new Date());
   const [openModal, setOpenModal] = useState(false);
-  const [rating, setRating] = useState(0);
 
   const [ratings, setRatings] = useState({});
 
   let currentDate = date.toLocaleDateString();
 
-  useEffect(() => {
-    console.log(ratings);
-  });
-
   const renderCell = (value) => {
-    if (value.$d.toLocaleDateString() === currentDate) {
-      return (
-        <div className="selected-date">
-          <AddIcon className="add-icon" onClick={() => setOpenModal(true)} />
-        </div>
-      );
-    }
+    return (
+      <>
+        {value.$d.toLocaleDateString() in ratings && (
+          <div
+            style={{
+              borderRadius: 10,
+              padding: 10,
+              backgroundColor:
+                ratings[value.$d.toLocaleDateString()] === 1
+                  ? "#FFCCCB"
+                  : ratings[value.$d.toLocaleDateString()] === 2
+                  ? "#FFD580"
+                  : ratings[value.$d.toLocaleDateString()] === 3
+                  ? "#FFDF00"
+                  : ratings[value.$d.toLocaleDateString()] === 4
+                  ? "#9ACD32"
+                  : "#008000",
+            }}
+          >
+            Sweet
+          </div>
+        )}
+        {value.$d.toLocaleDateString() === currentDate && (
+          <div className="selected-date">
+            <AddIcon className="add-icon" onClick={() => setOpenModal(true)} />
+          </div>
+        )}
+      </>
+    );
   };
 
   const handleModalConfirm = () => {
@@ -74,7 +89,7 @@ const CalendarPage = () => {
   return (
     <CalendarWrapper>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <NavBar/>
+        <NavBar />
         <span>Mental Health App</span>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}
@@ -84,7 +99,7 @@ const CalendarPage = () => {
         onChange={(e) => setDate(e.$d)}
         onSelect={(e) => console.log(e)}
         cellRender={renderCell}
-        rating={rating}
+        ratings={ratings}
       />
       <Modal
         open={openModal}
@@ -98,7 +113,6 @@ const CalendarPage = () => {
               defaultValue={3}
               character={({ index }) => customIcons[index + 1]}
               onChange={(e) => {
-                setRating(e);
                 setRatings({ ...ratings, [currentDate]: e });
               }}
             />
