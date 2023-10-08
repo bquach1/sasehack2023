@@ -20,7 +20,7 @@ collection = db["ratings"]
 summaryCollection = db['summary']
 # Send a ping to confirm a successful connection
 
-openai.api_key = "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"
+openai.api_key = MY_ENV_VAR
 
 app = Flask(__name__)
 app.secret_key = "shhh"
@@ -108,7 +108,6 @@ def chatbot():
 def summary():
     week = [{"role" : "system", "content" : "You will be given user data tracking their mental health throughout the week. Each day of the week will provide you with two things, a rating of their day which can range from 1-5 and a reflection they wrote of that day. You will analyze of their week and provide a summary of what you belive their well being is. Out of the seven days if they have no data marked for a day(s) add a sentence at the end of the summary addressing that. Please be sure to use word common in the mental health space and address the user directly. Do not mention any specific ratings or specific dates just give more of a general overview. Also take note of the differences between this week and the week before if you were provided data for the week before. Make the summary about 2-3 sentences long."}]
 
-<<<<<<< HEAD
     itteration = date.today().isoweekday()
 
     pastSummary = summaryCollection.find_one({"week": {"$eq": f"{date.today() - timedelta(((itteration - 1) + 7))}-{date.today() + timedelta(((8 - itteration)-7))}"}})
@@ -151,8 +150,6 @@ def summary():
         print("New object", insert)
 
     return {"reply" : reply}
-=======
->>>>>>> 65d61d0e4452336196a15d9ce1ecebba5651bf3a
 
 if __name__ == "__main__":
     app.run(debug=True)
