@@ -9,7 +9,7 @@ import { RATING_COLORS } from "../constants";
 
 const CalendarWrapper = styled.div`
   background-color: #daf0f7;
-  padding: 20px;
+  padding-bottom: 20px;
 
   .selected-date {
     margin-top: 1%;
@@ -53,15 +53,16 @@ const CalendarPage = () => {
   let currentDate = date.toLocaleDateString();
 
   useEffect(() => {
-    console.log(ratings);
-  })
-
-  useEffect(() => {
     axios
       .get("http://127.0.0.1:5000/insert")
       .then((response) => {
         if (response.status === 200) {
-          setRatings(response.data);
+          setRatings(
+            response.data.map((item) => {
+              const { _id, ...rest } = item;
+              return rest;
+            })
+          );
         }
       })
       .catch((error) => {
@@ -70,33 +71,39 @@ const CalendarPage = () => {
   }, []);
 
   useEffect(() => {
-    if (ratings[currentDate] && ratings[currentDate].reflection.length) {
-      setReflection(ratings[currentDate].reflection);
+    if (
+      Object.values(ratings).some(
+        (rating) => rating.date === currentDate && rating.reflection.length
+      )
+    ) {
+      setReflection(
+        Object.values(ratings).find((rating) => rating.date === currentDate)
+          .reflection
+      );
     } else {
       setReflection("");
     }
   }, [currentDate, ratings]);
 
-  useEffect(() => {
-    console.log(ratings);
-  });
-
   const renderCell = (value) => {
-    console.log(value.$d.toLocaleDateString());
     return (
       <>
-        {ratings
+        {Object.values(ratings)
           .filter((item) => item.date === value.$d.toLocaleDateString())
           .map((item, index) => (
             <div
-              key={index} // Add a unique key if you're rendering a list
+              key={index}
               style={{
                 borderRadius: 10,
                 padding: 10,
                 backgroundColor: RATING_COLORS[item.rating],
+                height: 30,
+                overflowY: "scroll",
               }}
             >
-              {item.reflection}
+              <div style={{ color: item.rating === 5 ? "white" : "black" }}>
+                {item.reflection}
+              </div>
             </div>
           ))}
         {value.$d.toLocaleDateString() === currentDate && (
@@ -113,31 +120,59 @@ const CalendarPage = () => {
     );
   };
 
-  const handleModalConfirm = () => {
-    setOpenModal(false);
-  };
-
   const handleSubmitModal = () => {
     if (rating !== 0 || reflection !== "") {
-      let newRating = { currentDate, rating, reflection };
-      if (ratings[currentDate] && rating === 0) {
+      let newRating = { date: currentDate, rating, reflection };
+      if (
+        Object.values(ratings).some((rating) => {
+          return rating.date === currentDate;
+        }) &&
+        rating === 0
+      ) {
         newRating = {
-          rating: ratings[currentDate].rating,
+          date: currentDate,
+          rating: Object.values(ratings).find(
+            (rating) => rating.date === currentDate
+          ).rating,
           reflection: reflection,
         };
-      } else if (ratings[currentDate] && reflection === "") {
+      } else if (
+        Object.values(ratings).some((rating) => {
+          return rating.date === currentDate;
+        }) &&
+        reflection === ""
+      ) {
         newRating = {
+          date: currentDate,
           rating: rating,
-          reflection: ratings[currentDate].reflection,
+          reflection: Object.values(ratings).find(
+            (rating) => rating.date === currentDate
+          ).reflection,
         };
       }
 
       setRatings((prevRatings) => {
-        const newKey = Object.keys(prevRatings).length + 1;
-        const updatedRatings = {
-          ...prevRatings,
-          [newKey]: newRating,
-        };
+        let updatedRatings = {};
+        const index = Object.values(ratings).findIndex(
+          (ratingObj) => ratingObj.date === currentDate
+        );
+
+        if (
+          Object.values(prevRatings).some(
+            (rating) => rating.date === currentDate
+          )
+        ) {
+          updatedRatings = {
+            ...prevRatings,
+            [index]: newRating,
+          };
+        } else {
+          const newKey = Object.keys(prevRatings).length + 1;
+          updatedRatings = {
+            ...prevRatings,
+            [newKey]: newRating,
+          };
+        }
 
         axios
           .post("http://127.0.0.1:5000/insert", updatedRatings, {
@@ -147,7 +182,7 @@ const CalendarPage = () => {
           })
           .then((response) => {
             if (response.status === 200) {
-              console.log(JSON.stringify(response.data));
+              JSON.stringify(response.data);
             }
           })
           .catch((error) => {
@@ -167,9 +202,7 @@ const CalendarPage = () => {
 
   return (
     <CalendarWrapper>
-      <div>
-        <NavBar />
-      </div>
+      <NavBar />
       <div style={{ display: "flex", flexDirection: "column" }}>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}
@@ -183,7 +216,7 @@ const CalendarPage = () => {
       <Modal
         open={openModal}
         onCancel={() => setOpenModal(false)}
-        onOk={handleModalConfirm}
+        onOk={handleSubmitModal}
         width={800}
       >
         <div
@@ -202,10 +235,22 @@ const CalendarPage = () => {
 
             {rating !== 0 ? (
               <CircleIcon style={{ color: RATING_COLORS[rating] }} />
-            ) : ratings[currentDate] &&
-              rating !== ratings[currentDate].rating ? (
+            ) : Object.values(ratings).some(
+                (rating) => rating.date === currentDate
+              ) &&
+              rating !==
+                Object.values(ratings).find(
+                  (rating) => rating.date === currentDate
+                ).rating ? (
               <CircleIcon
-                style={{ color: RATING_COLORS[ratings[currentDate].rating] }}
+                style={{
+                  color:
+                    RATING_COLORS[
+                      Object.values(ratings).find(
+                        (rating) => rating.date === currentDate
+                      ).rating
+                    ],
+                }}
               />
             ) : null}
           </div>
@@ -224,14 +269,23 @@ const CalendarPage = () => {
             </div>
           </div>
 
-          <div style={{ width: "90%" }}>
+          <div style={{ width: "90%", marginTop: "1%" }}>
             <Input
               value={reflection}
               onChange={(e) => setReflection(e.target.value)}
               placeholder="Reflect on how your day went!"
             />
           </div>
-          <Button onClick={handleSubmitModal}>Submit</Button>
+          <div style={{ marginTop: "1%" }}>
+            <strong>Today's Reflection: </strong>
+            {ratings &&
+              Object.values(ratings).some(
+                (rating) => currentDate === rating.date
+              ) &&
+              Object.values(ratings).find(
+                (rating) => currentDate === rating.date
+              ).reflection}
+          </div>
         </div>
       </Modal>
     </CalendarWrapper>

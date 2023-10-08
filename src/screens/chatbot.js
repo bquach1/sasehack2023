@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./chatbot.css";
 import NavBar from "../Navbar";
 
+const apiKey = process.env.OPEN_AI_API_KEY;
+
 function ChatBot() {
   const [input, setInput] = useState("");
   const [conversation, setConversation] = useState([]);
@@ -33,13 +35,13 @@ function ChatBot() {
         role,
         content,
       }));
-  
+
       // Send the conversation messages to the server
       const response = await fetch("http://127.0.0.1:5000/chatbot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer YOUR_API_KEY", // Replace with your API key
+          "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({ conversation: conversationMessages }), // Send only the conversation messages
       });
@@ -47,10 +49,10 @@ function ChatBot() {
       if (response.ok) {
         const data = await response.json();
         // Extract the chatbot's response from the API response
-        const botMessage = { role: "bot", content: data.choices[0].message.content };
+        const botMessage = { role: "bot", content: data['reply'] };
   
         // Add the chatbot's response to the conversation
-        setConversation([...updatedConversation, botMessage]);
+        setConversation([...conversation, botMessage]);
       } else {
         console.error("Failed to send the message to the server.");
       }
