@@ -1,4 +1,4 @@
-from flask import Flask, request, session
+from flask import Flask, request, session, jsonify
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
@@ -26,6 +26,8 @@ config = {
 # Update your CORS configuration to specify allowed origins for specific routes
 CORS(app, resources={r"/chatbot": {"origins": "http://localhost:3000"}})
 
+CORS(app, resources={r"/*": {"origins": config["ORIGINS"]}})
+
 @app.route("/insert", methods=["GET", "POST"])
 def insert():
     if request.method == "GET":
@@ -47,13 +49,12 @@ def insert():
         content = request.get_json()
         try:
             client.admin.command("ping")
-            print(content)
-            for index, input in enumerate(content):
-                date = list(content.keys())[index]
+            print(type(content))
+            for index, input in enumerate(content.items()):
                 dic = {
-                    "date": list(content.keys())[index],
-                    "rating": (content[date])["rating"],
-                    "reflection": (content[date])["reflection"],
+                    "date": input[1]["date"],
+                    "rating": input[1]["rating"],
+                    "reflection": input[1]["reflection"],
                 }
                 
                 if collection.find_one({"date": {"$eq": dic["date"]}}):
