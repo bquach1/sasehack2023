@@ -4,6 +4,12 @@ from pymongo.server_api import ServerApi
 from flask_cors import CORS
 import json
 import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MY_ENV_VAR = os.getenv('OPEN_AI_API_KEY')
 
 uri = "mongodb+srv://sasehack:JdCdqW7uC94ApJQ0@sasehack.dcf0caf.mongodb.net/?retryWrites=true&w=majority"
 # Create a new client and connect to the server
@@ -12,7 +18,7 @@ db = client["sasehack"]
 collection = db["ratings"]
 # Send a ping to confirm a successful connection
 
-openai.api_key = "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"
+openai.api_key = MY_ENV_VAR
 
 app = Flask(__name__)
 app.secret_key = "shhh"

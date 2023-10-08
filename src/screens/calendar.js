@@ -101,7 +101,9 @@ const CalendarPage = () => {
                 overflowY: "scroll",
               }}
             >
-              <div style={{ overflowY: "clip" }}>{item.reflection}</div>
+              <div style={{ color: item.rating === 5 ? "white" : "black" }}>
+                {item.reflection}
+              </div>
             </div>
           ))}
         {value.$d.toLocaleDateString() === currentDate && (
