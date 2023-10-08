@@ -5,12 +5,14 @@ import json
 uri = "mongodb+srv://sasehack:JdCdqW7uC94ApJQ0@sasehack.dcf0caf.mongodb.net/?retryWrites=true&w=majority"
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
+db = client["sasehack"]
+collection = db["ratings"]
 # Send a ping to confirm a successful connection
 
 app = Flask(__name__)
 
-@app.route("/test", methods=["GET", "POST"])
-def test():
+@app.route("/insert", methods=["GET", "POST"])
+def insert():
     content = request.get_json()
     try:
         client.admin.command('ping')
@@ -20,10 +22,31 @@ def test():
                     "date" : list(content.keys())[0],
                     "rating" : (content[date])["rating"],
                     "reflection" : (content[date])["reflection"],
-
                 }
-        print("Pinged your deployment. You successfully connected to MongoDB!")
+
+        if collection.find_one({"date": {"$eq": dic['date']}}):
+            replace = collection.replace_one(collection.find_one({"date": {"$eq": dic['date']}}),
+                                             dic)
+        else:
+            insert = collection.insert_one(dic)
+            print("else")
+        return {"status" : 200}
+    except Exception as e:
+        print(e)
+        return {"connection" : e}
+
+@app.route("/chatbot", methods=["GET", "POST"])
+def chatbot():
+    content = request.get_json()
+    try:
+        print(content)
+        dic =   {
+                    "message" : content["message"]
+                }
+        print("success")
+        
         return dic
+    
     except Exception as e:
         print(e)
         return {"connection" : e}
