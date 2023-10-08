@@ -97,9 +97,11 @@ const CalendarPage = () => {
                 borderRadius: 10,
                 padding: 10,
                 backgroundColor: RATING_COLORS[item.rating],
+                height: 30,
+                overflowY: "scroll",
               }}
             >
-              <span style={{ overflowY: "scroll" }}>{item.reflection}</span>
+              <div style={{ overflowY: "clip" }}>{item.reflection}</div>
             </div>
           ))}
         {value.$d.toLocaleDateString() === currentDate && (
