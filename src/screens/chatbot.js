@@ -8,7 +8,7 @@ function ChatBot() {
 
   useEffect(() => {
     // Initialize the conversation with a welcome message
-    setConversation([{ role: "system", content: "You are now chatting with the chatbot." }]);
+    setConversation([{ role: "system", content: "Answer the following question as a chatbot relating to mental health" }]);
   }, []);
 
   const handleInputChange = (e) => {
@@ -18,40 +18,47 @@ function ChatBot() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return;
-
+  
     // Create a new message object for the user's message
     const userMessage = { role: "user", content: input };
-
+  
     // Add the user's message to the conversation
-    setConversation([...conversation, userMessage]);
+    const updatedConversation = [...conversation, userMessage];
+    setConversation(updatedConversation);
     setInput("");
-
+  
     try {
-      // Send the conversation to the OpenAI API
-      const response = await fetch("YOUR_OPENAI_API_ENDPOINT", {
+      // Extract the conversation messages without any non-serializable data
+      const conversationMessages = updatedConversation.map(({ role, content }) => ({
+        role,
+        content,
+      }));
+  
+      // Send the conversation messages to the server
+      const response = await fetch("http://127.0.0.1:5000/chatbot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer YOUR_API_KEY",
+          "Authorization": "Bearer YOUR_API_KEY", // Replace with your API key
         },
-        body: JSON.stringify({ messages: conversation }),
+        body: JSON.stringify({ conversation: conversationMessages }), // Send only the conversation messages
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         // Extract the chatbot's response from the API response
         const botMessage = { role: "bot", content: data.choices[0].message.content };
-
+  
         // Add the chatbot's response to the conversation
-        setConversation([...conversation, botMessage]);
+        setConversation([...updatedConversation, botMessage]);
       } else {
         console.error("Failed to send the message to the server.");
       }
     } catch (error) {
       console.error("Error sending the message:", error);
     }
-  };
-
+  };  
+  
   return (
     <div className="chat-visual-container">
       <NavBar />

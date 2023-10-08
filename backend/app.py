@@ -3,8 +3,6 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
 import json
-from flask_cors import CORS
-
 uri = "mongodb+srv://sasehack:JdCdqW7uC94ApJQ0@sasehack.dcf0caf.mongodb.net/?retryWrites=true&w=majority"
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi("1"))
@@ -20,9 +18,8 @@ config = {
         "http://127.0.0.1:5000",  # React
     ],
 }
-
-CORS(app, resources={r"/*": {"origins": config["ORIGINS"]}}, supports_credentials=True)
-
+# Update your CORS configuration to specify allowed origins for specific routes
+CORS(app, resources={r"/chatbot": {"origins": "http://localhost:3000"}})
 
 @app.route("/insert", methods=["GET", "POST"])
 def insert():
