@@ -23,8 +23,6 @@ config = {
         "http://127.0.0.1:5000",  # React
     ],
 }
-# Update your CORS configuration to specify allowed origins for specific routes
-CORS(app, resources={r"/chatbot": {"origins": "http://localhost:3000"}})
 
 CORS(app, resources={r"/*": {"origins": config["ORIGINS"]}})
 
