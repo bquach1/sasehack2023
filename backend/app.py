@@ -14,8 +14,6 @@ collection = db["ratings"]
 app = Flask(__name__)
 CORS(app)
 
-CORS(app, resources={r"/chatbot": {"origins": "http://localhost:3000"}})
-
 @app.route("/insert", methods=["GET", "POST"])
 def insert():
     content = request.get_json()

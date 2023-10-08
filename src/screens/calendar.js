@@ -141,8 +141,10 @@ const CalendarPage = () => {
 
   return (
     <CalendarWrapper>
+      <div>
+      <NavBar />
+      </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <NavBar />
         <span>Mental Health App</span>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}
