@@ -5,7 +5,7 @@ export default function NavBar() {
     return (
         <nav className="nav">
             <Link to="/" >
-                <p className="navbar_title">MentalCalendar</p>
+                <p className="navbar_title">Psy-ki (气)</p>
             </Link>
             <ul>
                 <CustomLink className='navbar_calendar' to="/calendar">Calendar</CustomLink>

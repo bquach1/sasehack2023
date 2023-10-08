@@ -30,36 +30,40 @@
 .profile-and-overview-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* Create a 2-column grid */
-  gap: 20px; /* Add some spacing between the components */
+  gap: 200px; /* Add some spacing between the components */
+  align-items: center; /* Vertically center the components */
 }
 
 /* Profile container styles */
 .profile-container {
   padding: 20px;
   border: 1px solid #ccc; /* Add a border for separation */
+  text-align: center; /* Center the content within the profile container */
 }
 
-/* Profile picture styles */
+/* Increase the size of the profile picture */
 .profile-picture img {
-  width: 100px; /* Adjust the image width as needed */
-  height: 100px; /* Adjust the image height as needed */
+  width: 150px; /* Adjust the image width as needed */
+  height: 150px; /* Adjust the image height as needed */
   border-radius: 50%; /* Make the image round */
 }
 
 /* Profile name styles */
 .profile-info h2 {
-  font-size: 24px; /* Adjust the font size as needed */
+  font-size: 28px; /* Increase the font size as needed */
   margin-bottom: 10px; /* Add some spacing below the name */
 }
 
 /* Profile bio styles */
 .profile-info p {
-  font-size: 16px; /* Adjust the font size as needed */
+  font-size: 18px; /* Increase the font size as needed */
 }
 
 /* Overview container styles */
 .overview-container {
-  padding: 20px;
+  padding: 60px;
+  border: 1px solid #ccc; /* Add a border for separation */
+  text-align: center; /* Center the content within the overview container */
 }
 
 /* Loading message styles */

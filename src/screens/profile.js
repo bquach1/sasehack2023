@@ -5,7 +5,7 @@ import NavBar from "../Navbar";
 import "./overview.css";
 
 // Import your profile picture (replace 'profile.jpg' with the actual file or URL)
-import profileImage from "./logo192.png";
+import Bread from "../images/bread.png";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -29,7 +29,7 @@ const Profile = () => {
               <div className="profile-container">
                 <div className="profile-info">
                   <div className="profile-picture">
-                    <img src={profileImage} alt="Profile" />
+                    <img src={Bread} alt="Profile" />
                   </div>
                   <h2>{user.name}</h2>
                   <p>{user.bio}</p>

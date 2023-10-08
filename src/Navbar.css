@@ -11,6 +11,7 @@
   .navbar_title {
     font-size: 24px; /* Font size for the title */
     margin: 0;
+    font-weight: bold;
   }
   
   ul {
