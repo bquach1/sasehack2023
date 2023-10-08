@@ -10,7 +10,7 @@ function ChatBot() {
     setInput(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return;
 
@@ -21,27 +21,30 @@ function ChatBot() {
     ]);
     setInput("");
 
-    // Simulate a chatbot response (you can replace this with your actual chatbot logic)
-    //simulateChatbotResponse(input);
+    try {
+      // Send the user's message to the Flask back-end
+      const response = await fetch("http://localhost:5000/chatbot", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: input }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Add the chatbot's response to the chat
+        setMessages((prevMessages) => [
+          { text: data.message, sender: "bot" },
+          ...prevMessages,
+        ]);
+      } else {
+        console.error("Failed to send the message to the server.");
+      }
+    } catch (error) {
+      console.error("Error sending the message:", error);
+    }
   };
-
-  //   const simulateChatbotResponse = async (userInput) => {
-  //     // Here, you can implement your chatbot logic to generate a response based on the user's input.
-  //     // For simplicity, let's just echo back the user's input for demonstration purposes.
-  //     const body = {"question": userInput }; // convert to JSON since body needs to be in JSON format
-  //     const responses = [];
-  //     const response = await axios.post('http://127.0.0.1:3001/chat', {
-  //       question: userInput,
-  //     })
-
-  //     // console.log("hi")
-  //     console.log(response.data.response)
-  //     let resp = "";
-  //     resp = response.data.response;
-
-  //     // Add the chatbot's response to the chat
-  //     setMessages((prevMessages) => [{ text: resp, sender: 'bot' }, ...prevMessages]);
-  //   };
 
   return (
     <div className="chat-visual-container">
