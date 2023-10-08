@@ -5,7 +5,7 @@ import AddIcon from "@mui/icons-material/AddCircle";
 import CircleIcon from "@mui/icons-material/Circle";
 import NavBar from "../Navbar";
 import axios from "axios";
-import RATING_COLORS from "../constants";
+import { RATING_COLORS } from "../constants";
 
 const CalendarWrapper = styled.div`
   background-color: #daf0f7;
@@ -60,6 +60,10 @@ const CalendarPage = () => {
     }
   }, [currentDate, ratings]);
 
+  useEffect(() => {
+    console.log(ratings);
+  });
+
   const renderCell = (value) => {
     return (
       <>
@@ -104,8 +108,19 @@ const CalendarPage = () => {
   };
 
   const handleSubmitModal = () => {
-    if (rating !== 0 && reflection !== "") {
-      const newRating = { rating, reflection };
+    if (rating !== 0 || reflection !== "") {
+      let newRating = { rating, reflection };
+      if (ratings[currentDate] && rating === 0) {
+        newRating = {
+          rating: ratings[currentDate].rating,
+          reflection: reflection,
+        };
+      } else if (ratings[currentDate] && reflection === "") {
+        newRating = {
+          rating: rating,
+          reflection: ratings[currentDate].reflection,
+        };
+      }
 
       setRatings((prevRatings) => {
         const updatedRatings = {
@@ -114,7 +129,7 @@ const CalendarPage = () => {
         };
 
         axios
-          .post("http://127.0.0.1:5000/test", updatedRatings, {
+          .post("http://127.0.0.1:5000/insert", updatedRatings, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -145,7 +160,6 @@ const CalendarPage = () => {
       <NavBar />
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <span>Mental Health App</span>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}
         </span>
@@ -175,24 +189,13 @@ const CalendarPage = () => {
           <div style={{ display: "flex", alignItems: "center" }}>
             <strong style={{ marginRight: 5 }}>Current State: </strong>
 
-            {(ratings[currentDate] && ratings[currentDate].rating === 1) ||
-            rating === 1 ? (
-              <CircleIcon style={{ color: "#FFCCCB" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 2) ||
-              rating === 2 ? (
-              <CircleIcon style={{ color: "#FFD580" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 3) ||
-              rating === 3 ? (
-              <CircleIcon style={{ color: "#FFDF00" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 4) ||
-              rating === 4 ? (
-              <CircleIcon style={{ color: "#9ACD32" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 5) ||
-              rating === 5 ? (
-              <CircleIcon style={{ color: "#008000" }} />
+            {rating !== 0 ? (
+              <CircleIcon style={{ color: RATING_COLORS[rating] }} />
             ) : ratings[currentDate] &&
               rating !== ratings[currentDate].rating ? (
-              <CircleIcon style={{ color: RATING_COLORS[rating] }} />
+              <CircleIcon
+                style={{ color: RATING_COLORS[ratings[currentDate].rating] }}
+              />
             ) : null}
           </div>
 
