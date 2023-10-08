@@ -18,7 +18,6 @@ client = MongoClient(uri, server_api=ServerApi("1"))
 db = client["sasehack"]
 collection = db["ratings"]
 summaryCollection = db['summary']
-# Send a ping to confirm a successful connection
 
 openai.api_key = MY_ENV_VAR
 
@@ -33,7 +32,6 @@ config = {
 }
 
 CORS(app, resources={r"/*": {"origins": config["ORIGINS"]}})
-
 
 @app.route("/insert", methods=["GET", "POST"])
 def insert():
