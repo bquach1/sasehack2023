@@ -4,6 +4,7 @@ from pymongo.server_api import ServerApi
 from flask_cors import CORS
 import json
 import openai
+from datetime import date, timedelta, datetime
 import os
 from dotenv import load_dotenv
 
@@ -16,6 +17,7 @@ uri = "mongodb+srv://sasehack:JdCdqW7uC94ApJQ0@sasehack.dcf0caf.mongodb.net/?ret
 client = MongoClient(uri, server_api=ServerApi("1"))
 db = client["sasehack"]
 collection = db["ratings"]
+summaryCollection = db['summary']
 # Send a ping to confirm a successful connection
 
 openai.api_key = MY_ENV_VAR
@@ -102,8 +104,52 @@ def chatbot():
     except Exception as e:
         return {"exception": e}
 
-    # Main loop for chatting with the mental health chatbot
+@app.route("/summary", methods=["GET", "POST"])
+def summary():
+    week = [{"role" : "system", "content" : "You will be given user data tracking their mental health throughout the week. Each day of the week will provide you with two things, a rating of their day which can range from 1-5 and a reflection they wrote of that day. You will analyze of their week and provide a summary of what you belive their well being is. Out of the seven days if they have no data marked for a day(s) add a sentence at the end of the summary addressing that. Please be sure to use word common in the mental health space and address the user directly. Do not mention any specific ratings or specific dates just give more of a general overview. Also take note of the differences between this week and the week before if you were provided data for the week before. Make the summary about 2-3 sentences long."}]
 
+    itteration = date.today().isoweekday()
+
+    pastSummary = summaryCollection.find_one({"week": {"$eq": f"{date.today() - timedelta(((itteration - 1) + 7))}-{date.today() + timedelta(((8 - itteration)-7))}"}})
+    if pastSummary:
+        week.append({"role" : "system", "content" : f"Summary you gave the week before: {pastSummary['reply']}"})
+        print(pastSummary)
+    else:
+        print(f"{date.today() - timedelta(((itteration - 1) + 7))}-{date.today() + timedelta(((8 - itteration)-7))}")
+    
+    for i in range(itteration):
+        day = (date.today() - timedelta(i)).strftime("%m/%d/%Y").replace('/0', '/')
+        result = collection.find_one({'date' : day})
+        if result:
+            rating = result['rating']
+            reflection = result['reflection']
+            dic = {'role' : 'user', "content" : f"data for {day}, rating: {rating}/5, refection: {reflection}"}
+            week.append(dic)
+        else:
+            week.append({'role' : 'user', 'content' : f'data for {day}: No data'})
+    
+    response = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages = week
+    )
+    reply = response['choices'][0]['message']['content']
+
+    dic =   {
+                "week" : f"{date.today() - timedelta(itteration - 1)}-{date.today() + timedelta(8 - itteration)}",
+                "reply" : str(reply).replace('\\n\\n', '')
+            }
+    
+    if summaryCollection.find_one({"week": {"$eq": dic["week"]}}):
+        print(summaryCollection.find_one({"week": {"$eq": dic["week"]}}))
+        replace = summaryCollection.replace_one(
+            summaryCollection.find_one({"week": {"$eq": dic["week"]}}), dic
+        )
+        print("Replacing object", replace)
+    else:
+        insert = summaryCollection.insert_one(dic)
+        print("New object", insert)
+
+    return {"reply" : reply}
 
 if __name__ == "__main__":
     app.run(debug=True)
