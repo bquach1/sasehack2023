@@ -2,7 +2,6 @@ from flask import Flask, request, session, jsonify
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
-import json
 import openai
 from datetime import date, timedelta, datetime
 import os

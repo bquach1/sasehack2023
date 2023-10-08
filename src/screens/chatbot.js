@@ -6,23 +6,18 @@ const apiKey = process.env.OPEN_AI_API_KEY;
 
 function ChatBot() {
   const [input, setInput] = useState("");
-  const [conversation, setConversation] = useState([]);
+  const [conversation, setConversation] = useState([
+    {
+      role: "system",
+      content:
+        "Answer the following question as a chatbot relating to mental health",
+    },
+  ]);
   const [responding, setResponding] = useState(false);
 
   useEffect(() => {
     console.log(conversation);
-  })
-
-  useEffect(() => {
-    // Initialize the conversation with a welcome message
-    setConversation([
-      {
-        role: "system",
-        content:
-          "Answer the following question as a chatbot relating to mental health",
-      },
-    ]);
-  }, []);
+  });
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -36,9 +31,10 @@ function ChatBot() {
     const userMessage = { role: "user", content: input };
 
     // Add the user's message to the conversation
-    const updatedConversation = [...conversation, userMessage];
-    setConversation(updatedConversation);
+    setConversation([...conversation, userMessage]);
     setInput("");
+
+    const updatedConversation = [...conversation, userMessage];
 
     try {
       // Extract the conversation messages without any non-serializable data
