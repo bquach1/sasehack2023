@@ -12,8 +12,8 @@ const Profile = () => {
 
   useEffect(() => {
     const mockUser = {
-      name: "Insert name here",
-      bio: "Insert description here",
+      name: "Bread Boi",
+      bio: "The breadiest boi out there",
     };
 
     setUser(mockUser);
