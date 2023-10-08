@@ -19,7 +19,8 @@ const LandingPage = () => {
     },
     {
       cover: <img src={Calendar} alt="Calendar page" style={{ height: 375 }} />,
-      content: "Make a calendar to log how your days are going.",
+      content:
+        "Make a calendar to log how your days are going. View color-coded dates to see trends in your weeks and personal notes.",
     },
     {
       cover: <img src={Chatbot} alt="Chatbot page" style={{ height: 375 }} />,
@@ -27,7 +28,7 @@ const LandingPage = () => {
         "Consult with a mental-health focused AI chatbot to reflect on your days.",
     },
     {
-      cover: <img src={Profile} alt="Profile page" style={{ height: 375 }} />,
+      cover: <img src={Profile} alt="Profile page" style={{ height: 325 }} />,
       content: "Keep a personal profile and goals to make your days better!",
     },
   ];
@@ -45,7 +46,7 @@ const LandingPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearInterval(interval);
@@ -71,24 +72,29 @@ const LandingPage = () => {
         }}
       >
         {slides.map((slide, index) => (
-          <>
+          <div
+            style={{
+              position: "absolute",
+              top: "30%",
+              display: "flex",
+              margin: "0 auto",
+            }}
+          >
             <Card
               key={index}
               cover={slide.cover}
               style={{
-                position: "absolute",
-                // right: "25%",
-                top: "30%",
                 display: "flex",
-                margin: "0 auto",
               }}
               className={`card-content ${
                 index !== slideNumber ? "hidden" : ""
               }`}
             >
-              <p>{slide.content}</p>
+              <p style={{ maxWidth: 300, textAlign: "left" }}>
+                {slide.content}
+              </p>
             </Card>
-          </>
+          </div>
         ))}
       </div>
       <div
@@ -113,6 +119,18 @@ const LandingPage = () => {
         >
           Start your Day!
         </Button>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          bottom: "15%",
+          justifyContent: "space-between",
+          display: "flex",
+          width: "70%",
+        }}
+      >
+        <Button onClick={prevSlide}>Previous</Button>
+        <Button onClick={nextSlide}>Next</Button>
       </div>
     </div>
   );

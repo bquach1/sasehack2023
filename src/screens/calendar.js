@@ -203,7 +203,7 @@ const CalendarPage = () => {
   return (
     <CalendarWrapper>
       <NavBar />
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", flexDirection: "column", marginTop: "1%", marginBottom: "1%" }}>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}
         </span>

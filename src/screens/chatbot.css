@@ -1,11 +1,13 @@
 /* Styles for the chat box container */
 .chat-visual-container{
   background: #ceeef7;
+  height: 100vh;
 }
 
 .chat-box {
   width: 600px; /* Adjust the width as needed */
   margin: 0 auto 0 auto; /* Center the chat box horizontally and align it to the right */
+  margin-top: 1%;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
@@ -37,6 +39,7 @@
   background-color: #007bff;
   color: #fff;
   text-align: right;
+  margin-left: auto;
 }
 
 /* Styles for bot or other messages */
@@ -77,4 +80,33 @@ button[type="submit"] {
 /* Style the send button on hover */
 button[type="submit"]:hover {
   background-color: #0056b3;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background-color: #333;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 5px;
+  padding: 2px;
+  animation: shake 1s infinite;
 }
