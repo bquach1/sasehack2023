@@ -27,10 +27,10 @@ const LandingPage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center"          
+          justifyContent: "center",
         }}
       >
-        <h2>Mental Calendar</h2>
+        <h2>Psy-ki (气)</h2>
         <img src={Bread} alt="Egg toast" width={200} />
         <div>Project made by LSU Bread Boiz</div>
         <div>Log daily feelings on how your day went</div>
