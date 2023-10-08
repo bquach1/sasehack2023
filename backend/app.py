@@ -2,6 +2,7 @@ from flask import Flask, request
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import json
+from flask_cors import CORS
 uri = "mongodb+srv://sasehack:JdCdqW7uC94ApJQ0@sasehack.dcf0caf.mongodb.net/?retryWrites=true&w=majority"
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
@@ -10,6 +11,7 @@ collection = db["ratings"]
 # Send a ping to confirm a successful connection
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/insert", methods=["GET", "POST"])
 def insert():
