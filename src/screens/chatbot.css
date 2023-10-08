@@ -110,3 +110,7 @@ button[type="submit"]:hover {
   padding: 2px;
   animation: shake 1s infinite;
 }
+
+.system {
+  display: none;
+}

@@ -80,6 +80,11 @@ function ChatBot() {
       <div className="chat-box">
         {/* Previous Messages */}
         <div className="previous-messages">
+          {conversation.length === 1 &&
+            <div className={"message bot"}>
+              Please feel free to enter any message to begin your conversation with your AI helper!
+            </div>
+          }
           {conversation.map((message, index) => (
             <div key={index} className={`message ${message.role}`}>
               {message.content}
