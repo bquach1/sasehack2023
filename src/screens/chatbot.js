@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./chatbot.css";
 import NavBar from "../Navbar";
 
 function ChatBot() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [conversation, setConversation] = useState([]);
+
+  useEffect(() => {
+    // Initialize the conversation with a welcome message
+    setConversation([{ role: "system", content: "You are now chatting with the chatbot." }]);
+  }, []);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -14,30 +19,31 @@ function ChatBot() {
     e.preventDefault();
     if (input.trim() === "") return;
 
-    // Add the user's message to the chat
-    setMessages((prevMessages) => [
-      { text: input, sender: "user" },
-      ...prevMessages,
-    ]);
+    // Create a new message object for the user's message
+    const userMessage = { role: "user", content: input };
+
+    // Add the user's message to the conversation
+    setConversation([...conversation, userMessage]);
     setInput("");
 
     try {
-      // Send the user's message to the Flask back-end
-      const response = await fetch("http://localhost:5000/chatbot", {
+      // Send the conversation to the OpenAI API
+      const response = await fetch("YOUR_OPENAI_API_ENDPOINT", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY",
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ messages: conversation }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        // Add the chatbot's response to the chat
-        setMessages((prevMessages) => [
-          { text: data.message, sender: "bot" },
-          ...prevMessages,
-        ]);
+        // Extract the chatbot's response from the API response
+        const botMessage = { role: "bot", content: data.choices[0].message.content };
+
+        // Add the chatbot's response to the conversation
+        setConversation([...conversation, botMessage]);
       } else {
         console.error("Failed to send the message to the server.");
       }
@@ -53,9 +59,9 @@ function ChatBot() {
       <div className="chat-box">
         {/* Previous Messages */}
         <div className="previous-messages">
-          {messages.map((message, index) => (
-            <div key={index} className={`message ${message.sender}`}>
-              {message.text}
+          {conversation.map((message, index) => (
+            <div key={index} className={`message ${message.role}`}>
+              {message.content}
             </div>
           ))}
         </div>
