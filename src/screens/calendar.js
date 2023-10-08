@@ -53,6 +53,23 @@ const CalendarPage = () => {
   let currentDate = date.toLocaleDateString();
 
   useEffect(() => {
+    console.log(ratings);
+  })
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:5000/insert")
+      .then((response) => {
+        if (response.status === 200) {
+          setRatings(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+  }, []);
+
+  useEffect(() => {
     if (ratings[currentDate] && ratings[currentDate].reflection.length) {
       setReflection(ratings[currentDate].reflection);
     } else {
@@ -65,30 +82,23 @@ const CalendarPage = () => {
   });
 
   const renderCell = (value) => {
+    console.log(value.$d.toLocaleDateString());
     return (
       <>
-        {value.$d.toLocaleDateString() in ratings && (
-          <div
-            style={{
-              borderRadius: 10,
-              padding: 10,
-              backgroundColor:
-                ratings[value.$d.toLocaleDateString()].rating === 1
-                  ? "#FFCCCB"
-                  : ratings[value.$d.toLocaleDateString()].rating === 2
-                  ? "#FFD580"
-                  : ratings[value.$d.toLocaleDateString()].rating === 3
-                  ? "#FFDF00"
-                  : ratings[value.$d.toLocaleDateString()].rating === 4
-                  ? "#9ACD32"
-                  : ratings[value.$d.toLocaleDateString()].rating === 5
-                  ? "#008000"
-                  : "white",
-            }}
-          >
-            {ratings[value.$d.toLocaleDateString()].reflection}
-          </div>
-        )}
+        {ratings
+          .filter((item) => item.date === value.$d.toLocaleDateString())
+          .map((item, index) => (
+            <div
+              key={index} // Add a unique key if you're rendering a list
+              style={{
+                borderRadius: 10,
+                padding: 10,
+                backgroundColor: RATING_COLORS[item.rating],
+              }}
+            >
+              {item.reflection}
+            </div>
+          ))}
         {value.$d.toLocaleDateString() === currentDate && (
           <div className="selected-date">
             <Tooltip title={"Change your rating and reflection for this day!"}>
@@ -109,7 +119,7 @@ const CalendarPage = () => {
 
   const handleSubmitModal = () => {
     if (rating !== 0 || reflection !== "") {
-      let newRating = { rating, reflection };
+      let newRating = { currentDate, rating, reflection };
       if (ratings[currentDate] && rating === 0) {
         newRating = {
           rating: ratings[currentDate].rating,
@@ -123,9 +133,10 @@ const CalendarPage = () => {
       }
 
       setRatings((prevRatings) => {
+        const newKey = Object.keys(prevRatings).length + 1;
         const updatedRatings = {
           ...prevRatings,
-          [currentDate]: newRating,
+          [newKey]: newRating,
         };
 
         axios
@@ -157,7 +168,7 @@ const CalendarPage = () => {
   return (
     <CalendarWrapper>
       <div>
-      <NavBar />
+        <NavBar />
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <span>

@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
@@ -26,30 +26,46 @@ CORS(app, resources={r"/*": {"origins": config["ORIGINS"]}}, supports_credential
 
 @app.route("/insert", methods=["GET", "POST"])
 def insert():
-    content = request.get_json()
-    try:
-        client.admin.command("ping")
-        print(content)
-        for index, input in enumerate(content):
-            date = list(content.keys())[index]
-            dic = {
-                "date": list(content.keys())[index],
-                "rating": (content[date])["rating"],
-                "reflection": (content[date])["reflection"],
-            }
+    if request.method == "GET":
+        try:
+            # Fetch data from the MongoDB collection
+            data = list(collection.find({}))
             
-            if collection.find_one({"date": {"$eq": dic["date"]}}):
-                replace = collection.replace_one(
-                    collection.find_one({"date": {"$eq": dic["date"]}}), dic
-                )
-                print("Replacing object", replace)
-            else:
-                insert = collection.insert_one(dic)
-                print("New object", insert)
-        return {"status": 200}
-    except Exception as e:
-        print(e)
-        return {"connection": e}
+            for entry in data:
+                entry["_id"] = str(entry["_id"])
+            
+            # Convert the data to a list of dictionaries and jsonify it
+            result = [entry for entry in data]
+
+            return jsonify(result), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    
+    else:
+        content = request.get_json()
+        try:
+            client.admin.command("ping")
+            print(content)
+            for index, input in enumerate(content):
+                date = list(content.keys())[index]
+                dic = {
+                    "date": list(content.keys())[index],
+                    "rating": (content[date])["rating"],
+                    "reflection": (content[date])["reflection"],
+                }
+                
+                if collection.find_one({"date": {"$eq": dic["date"]}}):
+                    replace = collection.replace_one(
+                        collection.find_one({"date": {"$eq": dic["date"]}}), dic
+                    )
+                    print("Replacing object", replace)
+                else:
+                    insert = collection.insert_one(dic)
+                    print("New object", insert)
+            return {"status": 200}
+        except Exception as e:
+            print(e)
+            return {"connection": e}
 
 
 @app.route("/chatbot", methods=["GET", "POST"])
