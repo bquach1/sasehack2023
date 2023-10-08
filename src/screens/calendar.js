@@ -4,6 +4,8 @@ import styled from "styled-components";
 import AddIcon from "@mui/icons-material/AddCircle";
 import CircleIcon from "@mui/icons-material/Circle";
 import NavBar from "../Navbar";
+import axios from "axios";
+import RATING_COLORS from "../constants";
 
 const CalendarWrapper = styled.div`
   background-color: #daf0f7;
@@ -29,10 +31,6 @@ const TrackingCalendar = styled(Calendar)`
   border: 1px solid black;
   padding: 10px;
   border-radius: 10px;
-
-  td {
-    background-color: ${(props) => console.log(props)};
-  }
 `;
 
 const customIcons = {
@@ -55,8 +53,12 @@ const CalendarPage = () => {
   let currentDate = date.toLocaleDateString();
 
   useEffect(() => {
-    console.log(rating);
-  });
+    if (ratings[currentDate] && ratings[currentDate].reflection.length) {
+      setReflection(ratings[currentDate].reflection);
+    } else {
+      setReflection("");
+    }
+  }, [currentDate, ratings]);
 
   const renderCell = (value) => {
     return (
@@ -103,20 +105,38 @@ const CalendarPage = () => {
 
   const handleSubmitModal = () => {
     if (rating !== 0 && reflection !== "") {
-      // Create a new rating object
       const newRating = { rating, reflection };
 
-      // Add the new rating to the ratings collection
-      setRatings((prevRatings) => ({
-        ...prevRatings,
-        [currentDate]: newRating,
-      }));
+      setRatings((prevRatings) => {
+        const updatedRatings = {
+          ...prevRatings,
+          [currentDate]: newRating,
+        };
 
-      // Reset the input values
-      setRating(0);
-      setReflection("");
+        axios
+          .post("http://127.0.0.1:5000/test", updatedRatings, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log(JSON.stringify(response.data));
+            }
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+
+        setRating(0);
+        setReflection("");
+
+        setOpenModal(false);
+        return updatedRatings;
+      });
+    } else {
+      setOpenModal(false);
     }
-    setOpenModal(false);
   };
 
   return (
@@ -152,16 +172,25 @@ const CalendarPage = () => {
           </span>
           <div style={{ display: "flex", alignItems: "center" }}>
             <strong style={{ marginRight: 5 }}>Current State: </strong>
-            {(ratings[currentDate] && ratings[currentDate].rating === 1) || rating === 1 ? (
+
+            {(ratings[currentDate] && ratings[currentDate].rating === 1) ||
+            rating === 1 ? (
               <CircleIcon style={{ color: "#FFCCCB" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 2) || rating === 2 ? (
+            ) : (ratings[currentDate] && ratings[currentDate].rating === 2) ||
+              rating === 2 ? (
               <CircleIcon style={{ color: "#FFD580" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 3) || rating === 3 ? (
+            ) : (ratings[currentDate] && ratings[currentDate].rating === 3) ||
+              rating === 3 ? (
               <CircleIcon style={{ color: "#FFDF00" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 4) || rating === 4 ? (
+            ) : (ratings[currentDate] && ratings[currentDate].rating === 4) ||
+              rating === 4 ? (
               <CircleIcon style={{ color: "#9ACD32" }} />
-            ) : (ratings[currentDate] && ratings[currentDate].rating === 5) || rating === 5 ? (
+            ) : (ratings[currentDate] && ratings[currentDate].rating === 5) ||
+              rating === 5 ? (
               <CircleIcon style={{ color: "#008000" }} />
+            ) : ratings[currentDate] &&
+              rating !== ratings[currentDate].rating ? (
+              <CircleIcon style={{ color: RATING_COLORS[rating] }} />
             ) : null}
           </div>
 
@@ -181,11 +210,7 @@ const CalendarPage = () => {
 
           <div style={{ width: "90%" }}>
             <Input
-              value={
-                ratings[currentDate] && ratings[currentDate].reflection.length
-                  ? ratings[currentDate].reflection
-                  : reflection
-              }
+              value={reflection}
               onChange={(e) => setReflection(e.target.value)}
               placeholder="Reflect on how your day went!"
             />
