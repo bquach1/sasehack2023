@@ -11,13 +11,19 @@ app = Flask(__name__)
 
 @app.route("/test", methods=["GET", "POST"])
 def test():
-    content = request.is_json
-    # print(content)
+    content = request.get_json()
     try:
         client.admin.command('ping')
         print(content)
+        date = list(content.keys())[0]
+        dic =   {
+                    "date" : list(content.keys())[0],
+                    "rating" : (content[date])["rating"],
+                    "reflection" : (content[date])["reflection"],
+
+                }
         print("Pinged your deployment. You successfully connected to MongoDB!")
-        return {"query" : "content"}
+        return dic
     except Exception as e:
         print(e)
         return {"connection" : e}
