@@ -9,7 +9,7 @@ import { RATING_COLORS } from "../constants";
 
 const CalendarWrapper = styled.div`
   background-color: #daf0f7;
-  padding: 20px;
+  padding-bottom: 20px;
 
   .selected-date {
     margin-top: 1%;
@@ -101,7 +101,9 @@ const CalendarPage = () => {
                 overflowY: "scroll",
               }}
             >
-              <div style={{ overflowY: "clip" }}>{item.reflection}</div>
+              <div style={{ color: item.rating === 5 ? "white" : "black" }}>
+                {item.reflection}
+              </div>
             </div>
           ))}
         {value.$d.toLocaleDateString() === currentDate && (
@@ -200,9 +202,7 @@ const CalendarPage = () => {
 
   return (
     <CalendarWrapper>
-      <div>
-        <NavBar />
-      </div>
+      <NavBar />
       <div style={{ display: "flex", flexDirection: "column" }}>
         <span>
           <strong>Currently Selected Date:</strong> {currentDate}

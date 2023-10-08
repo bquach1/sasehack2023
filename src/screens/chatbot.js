@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./chatbot.css";
 import NavBar from "../Navbar";
 
+const apiKey = process.env.OPEN_AI_API_KEY;
+
 function ChatBot() {
   const [input, setInput] = useState("");
   const [conversation, setConversation] = useState([]);
@@ -39,7 +41,7 @@ function ChatBot() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer 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",
+          "Authorization": `Bearer ${apiKey}`,
         },
         body: JSON.stringify({ conversation: conversationMessages }), // Send only the conversation messages
       });
