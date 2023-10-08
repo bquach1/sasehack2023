@@ -1,42 +1,49 @@
 // src/components/Profile.js
-import React, { useState, useEffect } from 'react';
-import TodoList from './overview';
+import React, { useState, useEffect } from "react";
+import Overview from "./overview";
 import NavBar from "../Navbar";
-import "./overview.css"
+import "./overview.css";
 
 // Import your profile picture (replace 'profile.jpg' with the actual file or URL)
-import profileImage from './logo192.png';
+import profileImage from "./logo192.png";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Fetch user data from an API or database here
-    // For simplicity, we'll use a mock user object
     const mockUser = {
-      name: 'John Doe',
-      bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      name: "Insert name here",
+      bio: "Insert description here",
     };
 
     setUser(mockUser);
   }, []);
 
   return (
-    <div className="profile">
-      {user ? (
-        <div className="profile-container">
-          <div className="profile-info">
-            <div className="profile-picture">
-              <img src={profileImage} alt="Profile" />
+    <div>
+      <NavBar/>
+      <div className="page-container">
+        <div className="content-container">
+          <div className="profile-and-overview-container">
+            {user ? (
+              <div className="profile-container">
+                <div className="profile-info">
+                  <div className="profile-picture">
+                    <img src={profileImage} alt="Profile" />
+                  </div>
+                  <h2>{user.name}</h2>
+                  <p>{user.bio}</p>
+                </div>
+              </div>
+            ) : (
+              <p>Loading...</p>
+            )}
+            <div className="overview-container">
+              <Overview />
             </div>
-            <h2>{user.name}</h2>
-            <p>{user.bio}</p>
           </div>
         </div>
-      ) : (
-        <p>Loading...</p>
-      )}
-      <TodoList />
+      </div>
     </div>
   );
 };
