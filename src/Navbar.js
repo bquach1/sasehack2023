@@ -10,6 +10,7 @@ export default function NavBar() {
             <ul>
                 <CustomLink className='navbar_calendar' to="/calendar">Calendar</CustomLink>
                 <CustomLink className='navbar_bot' to="/chatbot">Chat Bot</CustomLink>
+                <CustomLink className='navbar_profile' to="/overview">Profile</CustomLink>
             </ul>
         </nav>
     );
